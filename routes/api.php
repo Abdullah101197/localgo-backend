@@ -9,6 +9,11 @@ use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\PaymentController;
 
 // Public Routes
+Route::get("test", function () {
+    return response()->json([
+        "message" => "Hello World",
+    ]);
+});
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
