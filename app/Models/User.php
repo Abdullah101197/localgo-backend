@@ -23,7 +23,11 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'phone',
+        'avatar_url',
     ];
+
+    protected $withCount = ['orders', 'addresses'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -60,5 +64,20 @@ class User extends Authenticatable
     public function orders()
     {
         return $this->hasMany(Order::class, 'customer_id');
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function favorites()
+    {
+        return $this->belongsToMany(Product::class, 'favorites', 'user_id', 'product_id')->withTimestamps();
     }
 }

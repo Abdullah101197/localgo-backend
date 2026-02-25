@@ -42,19 +42,15 @@ class ShopController extends Controller
 
             // Haversine formula for distance calculation
             $query->selectRaw("*, ( 6371 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) AS distance", [$lat, $lng, $lat])
+                ->withAvg('reviews', 'rating') // Calculate average rating for sorting
                 ->having('distance', '<', $radius)
-                ->orderBy('distance');
+                ->orderBy('distance', 'asc')
+                ->orderBy('reviews_avg_rating', 'desc');
         } else {
             $query->latest();
         }
 
         return \App\Http\Resources\ShopResource::collection($query->paginate(12));
-    }
-
-    public function categories()
-    {
-        $categories = \App\Models\Shop::distinct()->pluck('category');
-        return response()->json($categories);
     }
 
     /**
@@ -106,6 +102,7 @@ class ShopController extends Controller
             'longitude' => 'nullable|numeric',
             'delivery_radius' => 'numeric',
             'image_url' => 'nullable|url',
+            'is_active' => 'boolean',
         ]);
 
         $shop->update($validated);
@@ -124,6 +121,47 @@ class ShopController extends Controller
 
         $shop->delete();
 
-        return response()->json(['message' => 'Shop deleted successfully']);
+        return response()->json([
+            'message' => 'Shop deleted successfully'
+        ]);
+    }
+
+    /**
+     * Get top rated shops
+     */
+    public function topRated(Request $request)
+    {
+        $shops = \App\Models\Shop::where('is_active', 1)
+            ->inRandomOrder()
+            ->limit(3)
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $shops
+        ]);
+    }
+
+    public function categories(Request $request)
+    {
+        $categories = \App\Models\Shop::select('category')
+            ->where('is_active', 1)
+            ->groupBy('category')
+            ->get()
+            ->map(function ($shop) {
+                $count = \App\Models\Shop::where('category', $shop->category)
+                    ->where('is_active', 1)
+                    ->count();
+
+                return [
+                    'name' => $shop->category,
+                    'count' => $count
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $categories
+        ]);
     }
 }

@@ -10,15 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('riders', function (Blueprint $table) {
+        Schema::create('addresses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('vehicle_type')->default('bike'); // bike, cycle
-            $table->string('license_plate')->nullable();
-            $table->decimal('current_latitude', 10, 8)->nullable();
-            $table->decimal('current_longitude', 11, 8)->nullable();
-            $table->boolean('is_available')->default(true);
-            $table->boolean('is_verified')->default(false);
+            $table->string('label')->default('Home'); // Home, Work, etc.
+            $table->string('address_line');
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 10, 8)->nullable();
+            $table->boolean('is_default')->default(false);
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('riders');
+        Schema::dropIfExists('addresses');
     }
 };

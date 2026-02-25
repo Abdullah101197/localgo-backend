@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->string('image_url')->nullable();
             $table->text('address');
             $table->decimal('latitude', 10, 8)->nullable();
-            $table->decimal('longitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
             $table->float('delivery_radius')->default(5.0); // km
             $table->boolean('is_verified')->default(false);
             $table->timestamps();

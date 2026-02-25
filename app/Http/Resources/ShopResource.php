@@ -25,6 +25,8 @@ class ShopResource extends JsonResource
             'longitude' => $this->longitude,
             'delivery_radius' => $this->delivery_radius,
             'is_verified' => (bool) $this->is_verified,
+            'average_rating' => $this->average_rating,
+            'reviews_count' => $this->reviews()->count(),
             'distance' => $this->when(isset($this->distance), round($this->distance, 2)),
             'products' => ProductResource::collection($this->whenLoaded('products')),
             'created_at' => $this->created_at,

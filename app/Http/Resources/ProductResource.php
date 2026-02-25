@@ -24,6 +24,8 @@ class ProductResource extends JsonResource
             'category' => $this->category,
             'image_url' => $this->image_url,
             'is_active' => (bool) $this->is_active,
+            'average_rating' => $this->average_rating,
+            'reviews_count' => $this->reviews()->count(),
             'shop' => new ShopResource($this->whenLoaded('shop')),
             'distance' => $this->when(isset($this->distance), round($this->distance, 2)),
         ];

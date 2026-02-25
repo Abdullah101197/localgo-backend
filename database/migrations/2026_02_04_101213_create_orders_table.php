@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->string('payment_method')->default('cod');
             $table->string('delivery_address');
             $table->decimal('delivery_latitude', 10, 8)->nullable();
-            $table->decimal('delivery_longitude', 10, 8)->nullable();
+            $table->decimal('delivery_longitude', 11, 8)->nullable();
             $table->timestamps();
         });
     }

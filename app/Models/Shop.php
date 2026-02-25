@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Shop extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'user_id',
         'name',
@@ -17,7 +19,10 @@ class Shop extends Model
         'longitude',
         'delivery_radius',
         'is_verified',
+        'is_active',
     ];
+
+    protected $appends = ['average_rating'];
 
     public function user()
     {
@@ -32,5 +37,15 @@ class Shop extends Model
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasManyThrough(Review::class, Product::class);
+    }
+
+    public function getAverageRatingAttribute()
+    {
+        return round($this->reviews()->avg('rating') ?: 5, 1);
     }
 }

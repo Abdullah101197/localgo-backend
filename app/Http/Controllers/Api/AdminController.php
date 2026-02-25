@@ -32,4 +32,42 @@ class AdminController extends Controller
     {
         return response()->json(Rider::with('user')->paginate(20));
     }
+
+    public function users()
+    {
+        return response()->json(User::latest()->paginate(20));
+    }
+
+    public function toggleShopStatus(Shop $shop)
+    {
+        $shop->update(['is_active' => !$shop->is_active]);
+        return response()->json([
+            'success' => true,
+            'is_active' => $shop->is_active,
+            'message' => 'Shop status updated successfully'
+        ]);
+    }
+
+    public function toggleRiderStatus(Rider $rider)
+    {
+        $rider->update(['is_verified' => !$rider->is_verified]);
+        return response()->json([
+            'success' => true,
+            'is_verified' => $rider->is_verified,
+            'message' => 'Rider verification status updated successfully'
+        ]);
+    }
+
+    public function deleteUser(User $user)
+    {
+        if ($user->role === 'admin') {
+            return response()->json(['message' => 'Cannot delete admin users'], 403);
+        }
+
+        $user->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'User deleted successfully'
+        ]);
+    }
 }
